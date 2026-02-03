@@ -23,6 +23,22 @@ import {
 } from "@/components/ui/sheet";
 import Link from "next/link";
 import Image from "next/image";
+import { useState, useEffect } from "react";
+import { LogOut, User, LayoutDashboard, Settings } from "lucide-react";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface MenuItem {
   title: string;
@@ -72,6 +88,35 @@ const Navbar = ({
   },
   className,
 }: Navbar1Props) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<{ name: string; avatar: string; email: string } | null>(null);
+
+  useEffect(() => {
+    // Check initial state
+    const updateAuthState = () => {
+      const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+      setIsLoggedIn(loggedIn);
+      if (loggedIn) {
+        const userData = localStorage.getItem("user");
+        if (userData) setUser(JSON.parse(userData));
+      } else {
+        setUser(null);
+      }
+    };
+
+    updateAuthState();
+
+    // Listen for custom event
+    window.addEventListener("auth-change", updateAuthState);
+    return () => window.removeEventListener("auth-change", updateAuthState);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("user");
+    window.dispatchEvent(new Event("auth-change"));
+  };
+
   return (
     <section className={cn("py-4", className)}>
       <div className="container mx-auto px-4">
@@ -96,12 +141,62 @@ const Navbar = ({
             </NavigationMenu>
           </div>
           <div className="flex gap-2">
-            <Button asChild variant="secondary">
-              <a href={auth.login.url}>{auth.login.title}</a>
-            </Button>
-            <Button asChild>
-              <a href={auth.signup.url}>{auth.signup.title}</a>
-            </Button>
+            {isLoggedIn && user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-12 flex items-center gap-3 px-3 rounded-full hover:bg-muted font-bold text-[#173e72]">
+                    <Avatar className="h-9 w-9 border-2 border-primary/20">
+                      <AvatarImage src={user.avatar} alt={user.name || "User"} />
+                      <AvatarFallback className="bg-primary/10 text-primary uppercase">{user.name?.[0] || "U"}</AvatarFallback>
+                    </Avatar>
+                    <span className="max-w-[120px] truncate">{user.name}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-bold leading-none text-[#173e72]">{user.name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard" className="cursor-pointer">
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        <span>Dashboard</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/profile" className="cursor-pointer">
+                        <User className="mr-2 h-4 w-4" />
+                        <span>Profile</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/settings" className="cursor-pointer">
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Settings</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive cursor-pointer">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button asChild variant="secondary">
+                  <a href={auth.login.url}>{auth.login.title}</a>
+                </Button>
+                <Button asChild>
+                  <a href={auth.signup.url}>{auth.signup.title}</a>
+                </Button>
+              </>
+            )}
           </div>
         </nav>
 
@@ -137,17 +232,49 @@ const Navbar = ({
                   </SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col gap-8 p-4 pt-10">
+                  {isLoggedIn && user && (
+                    <div className="flex items-center gap-4 bg-muted/50 p-4 rounded-2xl">
+                      <Avatar className="h-12 w-12 border-2 border-primary/20">
+                        <AvatarImage src={user.avatar} alt={user.name || "User"} />
+                        <AvatarFallback className="bg-primary/10 text-primary text-xl font-bold">{user.name?.[0] || "U"}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col">
+                        <span className="font-bold text-[#173e72] text-lg">{user.name}</span>
+                        <span className="text-sm text-muted-foreground">{user.email}</span>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex flex-col gap-6">
                     {menu.map((item) => renderMobileMenuItem(item))}
+                    {isLoggedIn && (
+                      <>
+                        <Link href="/dashboard" className="text-xl font-bold text-[#173e72] hover:translate-x-1 transition-transform flex items-center gap-2">
+                          <LayoutDashboard className="h-5 w-5" /> Dashboard
+                        </Link>
+                        <Link href="/profile" className="text-xl font-bold text-[#173e72] hover:translate-x-1 transition-transform flex items-center gap-2">
+                          <User className="h-5 w-5" /> Profile
+                        </Link>
+                      </>
+                    )}
                   </div>
 
                   <div className="flex flex-col gap-4 mt-4 border-t pt-8">
-                    <Button asChild variant="secondary" className="w-full">
-                      <a href={auth.login.url}>{auth.login.title}</a>
-                    </Button>
-                    <Button asChild className="w-full">
-                      <a href={auth.signup.url}>{auth.signup.title}</a>
-                    </Button>
+                    {isLoggedIn ? (
+                      <Button onClick={handleLogout} variant="destructive" className="w-full h-12 rounded-xl font-bold">
+                        <LogOut className="mr-2 h-5 w-5" />
+                        Log out
+                      </Button>
+                    ) : (
+                      <>
+                        <Button asChild variant="secondary" className="w-full h-12 rounded-xl font-bold">
+                          <a href={auth.login.url}>{auth.login.title}</a>
+                        </Button>
+                        <Button asChild className="w-full h-12 rounded-xl font-bold">
+                          <a href={auth.signup.url}>{auth.signup.title}</a>
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
               </SheetContent>
