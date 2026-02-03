@@ -136,20 +136,16 @@ const Navbar = ({
                     </a>
                   </SheetTitle>
                 </SheetHeader>
-                <div className="flex flex-col gap-6 p-4">
-                  <Accordion
-                    type="single"
-                    collapsible
-                    className="flex w-full flex-col gap-4"
-                  >
+                <div className="flex flex-col gap-8 p-4 pt-10">
+                  <div className="flex flex-col gap-6">
                     {menu.map((item) => renderMobileMenuItem(item))}
-                  </Accordion>
+                  </div>
 
-                  <div className="flex flex-col gap-3">
-                    <Button asChild variant="secondary">
+                  <div className="flex flex-col gap-4 mt-4 border-t pt-8">
+                    <Button asChild variant="secondary" className="w-full">
                       <a href={auth.login.url}>{auth.login.title}</a>
                     </Button>
-                    <Button asChild>
+                    <Button asChild className="w-full">
                       <a href={auth.signup.url}>{auth.signup.title}</a>
                     </Button>
                   </div>
@@ -178,7 +174,7 @@ const renderMenuItem = (item: MenuItem) => {
 
 const renderMobileMenuItem = (item: MenuItem) => {
   return (
-    <Link key={item.title} href={item.url} className="text-md font-semibold text-[#173e72]">
+    <Link key={item.title} href={item.url} className="text-xl font-bold text-[#173e72] hover:translate-x-1 transition-transform">
       {item.title}
     </Link>
   );
