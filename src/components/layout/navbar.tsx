@@ -6,18 +6,13 @@ import { cn } from "@/lib/utils";
 
 import {
   Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import {
   Sheet,
@@ -27,6 +22,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import Link from "next/link";
+import Image from "next/image";
 
 interface MenuItem {
   title: string;
@@ -59,12 +55,6 @@ interface Navbar1Props {
 }
 
 const Navbar = ({
-  logo = {
-    url: "https://www.shadcnblocks.com",
-    src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
-    alt: "logo",
-    title: "Shadcnblocks.com",
-  },
   menu = [
     { title: "Home", url: "/" },
     {
@@ -84,27 +74,32 @@ const Navbar = ({
 }: Navbar1Props) => {
   return (
     <section className={cn("py-4", className)}>
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4">
         {/* Desktop Menu */}
         <nav className="hidden items-center justify-between lg:flex">
           <div className="flex items-center gap-6">
             {/* Logo */}
-            <a href={logo.url} className="flex items-center gap-2">
-             LOGO
+            <a href={"/"} className="flex items-center gap-2">
+              <Image
+                src={"/logo.png"}
+                alt="Skillbridge The Best Online Learning Platform"
+                height={80}
+                width={80}
+              />
             </a>
-            <div className="flex items-center">
-              <NavigationMenu>
-                <NavigationMenuList>
-                  {menu.map((item) => renderMenuItem(item))}
-                </NavigationMenuList>
-              </NavigationMenu>
-            </div>
+          </div>
+          <div className="flex items-center">
+            <NavigationMenu>
+              <NavigationMenuList>
+                {menu.map((item) => renderMenuItem(item))}
+              </NavigationMenuList>
+            </NavigationMenu>
           </div>
           <div className="flex gap-2">
-            <Button asChild variant="outline" size="sm">
+            <Button asChild variant="secondary">
               <a href={auth.login.url}>{auth.login.title}</a>
             </Button>
-            <Button asChild size="sm">
+            <Button asChild>
               <a href={auth.signup.url}>{auth.signup.title}</a>
             </Button>
           </div>
@@ -114,8 +109,13 @@ const Navbar = ({
         <div className="block lg:hidden">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <a href={logo.url} className="flex items-center gap-2">
-              Logo
+            <a href={"/"} className="flex items-center gap-2">
+              <Image
+                src={"/logo.png"}
+                alt="Skillbridge The Best Online Learning Platform"
+                height={50}
+                width={50}
+              />
             </a>
             <Sheet>
               <SheetTrigger asChild>
@@ -126,8 +126,13 @@ const Navbar = ({
               <SheetContent className="overflow-y-auto">
                 <SheetHeader>
                   <SheetTitle>
-                    <a href={logo.url} className="flex items-center gap-2">
-                      logo
+                    <a href={"/"} className="flex items-center gap-2">
+                      <Image
+                        src={"/logo.png"}
+                        alt="Skillbridge The Best Online Learning Platform"
+                        height={80}
+                        width={80}
+                      />
                     </a>
                   </SheetTitle>
                 </SheetHeader>
@@ -141,7 +146,7 @@ const Navbar = ({
                   </Accordion>
 
                   <div className="flex flex-col gap-3">
-                    <Button asChild variant="outline">
+                    <Button asChild variant="secondary">
                       <a href={auth.login.url}>{auth.login.title}</a>
                     </Button>
                     <Button asChild>
@@ -163,7 +168,7 @@ const renderMenuItem = (item: MenuItem) => {
     <NavigationMenuItem key={item.title}>
       <NavigationMenuLink
         asChild
-        className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground"
+        className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-semibold text-[#173e72] transition-colors hover:bg-muted hover:text-accent-foreground"
       >
         <Link href={item.url}>{item.title}</Link>
       </NavigationMenuLink>
@@ -173,7 +178,7 @@ const renderMenuItem = (item: MenuItem) => {
 
 const renderMobileMenuItem = (item: MenuItem) => {
   return (
-    <Link key={item.title} href={item.url} className="text-md font-semibold">
+    <Link key={item.title} href={item.url} className="text-md font-semibold text-[#173e72]">
       {item.title}
     </Link>
   );
