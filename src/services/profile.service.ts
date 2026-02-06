@@ -17,7 +17,10 @@ export const profileService = {
             const data = await res.json();
 
             if (!res.ok) {
-                return { data: null, error: { message: data.message || "Failed to fetch profile" } };
+                return {
+                    data: null,
+                    error: { message: data.message || "Failed to fetch profile" },
+                };
             }
 
             return { data: data.data, error: null };
@@ -41,7 +44,10 @@ export const profileService = {
             const data = await res.json();
 
             if (!res.ok) {
-                return { data: null, error: { message: data.message || "Failed to update profile" } };
+                return {
+                    data: null,
+                    error: { message: data.message || "Failed to update profile" },
+                };
             }
 
             return { data: data.data, error: null };
