@@ -14,32 +14,36 @@ import {
     SidebarRail,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { adminRoutes, tutorRoutes, studentRoutes } from "@/routes";
-import { Route } from "@/types";
+
 import { GraduationCap } from "lucide-react";
+import { adminRoutes } from "@/routes/adminRoutes";
+import { tutorRoutes } from "@/routes/tutorRoutes";
+import { studentRoutes } from "@/routes/studentRoutes";
+import { Route } from "@/types/routes.type";
 
 export function AppSidebar({
     user,
     ...props
 }: {
-    user: { role: string; name?: string; email?: string };
+    user: { role: string};
 } & React.ComponentProps<typeof Sidebar>) {
-    let routes: Route[] = [];
+    let routes: Route[] = []
 
-    switch (user.role.toUpperCase()) {
+    switch(user.role.toUpperCase()) {
         case "ADMIN":
             routes = adminRoutes;
             break;
         case "TUTOR":
-            routes = tutorRoutes;
+            routes = tutorRoutes
             break;
         case "STUDENT":
             routes = studentRoutes;
-            break;
+            break; 
         default:
-            routes = [];
+            routes =[];
             break;
     }
+    
 
     return (
         <Sidebar {...props}>
@@ -50,17 +54,16 @@ export function AppSidebar({
                 </Link>
             </SidebarHeader>
             <SidebarContent>
-                {routes.map((group) => (
-                    <SidebarGroup key={group.title}>
-                        <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+                {routes.map((item) => (
+                    <SidebarGroup key={item.title}>
+                        <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
-                                {group.items.map((item) => (
-                                    <SidebarMenuItem key={item.title}>
+                                {item.items.map((item) => (
+                                    <SidebarMenuItem key={item.name}>
                                         <SidebarMenuButton asChild>
                                             <Link href={item.url}>
-                                                {item.icon && <item.icon />}
-                                                <span>{item.title}</span>
+                                                <span>{item.name}</span>
                                             </Link>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>

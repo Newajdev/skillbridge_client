@@ -23,25 +23,25 @@ export default function DashboardLayout({
   tutor: React.ReactNode;
   student: React.ReactNode;
 }) {
-  // Mocking user info for now. In a real app, this would come from an auth hook/provider.
+  
   const userInfo = {
-    role: "ADMIN", // Change this to "TUTOR" or "STUDENT" to test
+    role: "ADMIN", 
     name: "Admin User",
     email: "admin@skillbridge.com",
   };
 
-  const renderDashboard = () => {
-    switch (userInfo.role.toUpperCase()) {
-      case "ADMIN":
-        return admin;
-      case "TUTOR":
-        return tutor;
-      case "STUDENT":
-        return student;
-      default:
-        return <div>Access Denied</div>;
-    }
-  };
+  // const renderDashboard = () => {
+  //   switch (userInfo.role.toUpperCase()) {
+  //     case "ADMIN":
+  //       return admin;
+  //     case "TUTOR":
+  //       return tutor;
+  //     case "STUDENT":
+  //       return student;
+  //     default:
+  //       return <div>Access Denied</div>;
+  //   }
+  // };
 
   return (
     <SidebarProvider>
@@ -65,7 +65,11 @@ export default function DashboardLayout({
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">{renderDashboard()}</div>
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          {userInfo.role === "ADMIN" && admin}
+          {userInfo.role === "TUTOR" && tutor}
+          {userInfo.role === "STUDENT" && student}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

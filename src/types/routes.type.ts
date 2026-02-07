@@ -1,8 +1,7 @@
-export interface Route {
+export interface Route{
     title: string;
     items: {
-        title: string;
+        name: string;
         url: string;
-        icon?: any;
     }[];
 }
