@@ -41,7 +41,6 @@ export default function RegisterPage() {
         const ToastId = toast.loading("Creating user")
         try {
             const { data, error } = await authClient.signUp.email(value);
-            console.log(error)
             if (error) {
                 toast.error(error.message, { id: ToastId });
                 return
@@ -146,7 +145,7 @@ export default function RegisterPage() {
             href="/login"
             className="text-primary font-semibold hover:underline hover:underline-offset-4"
           >
-            Sign in
+            login
           </Link>
         </div>
       </CardFooter>
