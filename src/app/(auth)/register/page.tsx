@@ -22,9 +22,9 @@ import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 
 const formSchema = z.object({
-  name: z.string().min(4, "This field is required"),
-  email: z.email(),
-  password: z.string().min(8, "This field is required"),
+  name: z.string().min(4, "Name must be at least 4 characters"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 export default function RegisterPage() {

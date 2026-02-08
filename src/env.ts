@@ -6,9 +6,14 @@ export const env = createEnv({
     API_URL: z.string().url(),
     AUTH_URL: z.string().url(),
   },
-  client: {},
+  client: {
+    NEXT_PUBLIC_API_URL: z.string().url(),
+    NEXT_PUBLIC_AUTH_URL: z.string().url(),
+  },
   runtimeEnv: {
     API_URL: process.env.API_URL,
     AUTH_URL: process.env.AUTH_URL,
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    NEXT_PUBLIC_AUTH_URL: process.env.NEXT_PUBLIC_AUTH_URL,
   },
 });
