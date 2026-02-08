@@ -1,144 +1,155 @@
-"use client"
+"use client";
+import Link from "next/link";
 
-import Link from "next/link"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { authClient } from "@/lib/auth-client"
-
-import { Button } from "@/components/ui/button"
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useForm } from "@tanstack/react-form";
+import { Button } from "@/components/ui/button";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import * as z from "zod";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
+
+const formSchema = z.object({
+  name: z.string().min(4, "This field is required"),
+  email: z.email(),
+  password: z.string().min(8, "This field is required"),
+});
 
 export default function RegisterPage() {
-    const router = useRouter()
-    const [isLoading, setIsLoading] = useState(false)
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-    })
-
-    const handleRegister = async () => {
-        const { name, email, password, confirmPassword } = formData
-
-        if (!name || !email || !password || !confirmPassword) {
-            toast.error("Please fill in all fields")
-            return
-        }
-
-        if (password !== confirmPassword) {
-            toast.error("Passwords do not match")
-            return
-        }
-
-        setIsLoading(true)
-        const loadToast = toast.loading("Creating your account...")
-
+  const form = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+    validators: {
+      onSubmit: formSchema
+    },
+    onSubmit: async ({ value }) => {
+        const ToastId = toast.loading("Creating user")
         try {
-            const { data, error } = await authClient.signUp.email({
-                email,
-                password,
-                name,
-            })
-
+            const { data, error } = await authClient.signUp.email(value);
+            console.log(error)
             if (error) {
-                toast.error(error.message || "Registration failed", { id: loadToast })
-            } else {
-                toast.success("Registration successful! Please check your email for verification.", { id: loadToast })
-                router.push("/login")
+                toast.error(error.message, { id: ToastId });
+                return
             }
-        } catch (err: any) {
-            console.error("Registration error:", err)
-            toast.error("An unexpected error occurred", { id: loadToast })
-        } finally {
-            setIsLoading(false)
-        }
-    }
 
-    return (
-        <Card className="border-none shadow-xl bg-background/80 backdrop-blur-md">
-            <CardHeader className="space-y-1 text-center">
-                <CardTitle className="text-2xl font-bold tracking-tight">Create an account</CardTitle>
-                <CardDescription>
-                    Enter your details below to create your SkillBridge account
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-                <div className="grid gap-2">
-                    <Label htmlFor="name">Full Name</Label>
-                    <Input
-                        id="name"
-                        type="text"
-                        placeholder="John Doe"
-                        className="bg-muted/50"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        disabled={isLoading}
-                    />
-                </div>
-                <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                        id="email"
-                        type="email"
-                        placeholder="m@example.com"
-                        className="bg-muted/50"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        disabled={isLoading}
-                    />
-                </div>
-                <div className="grid gap-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                        id="password"
-                        type="password"
-                        className="bg-muted/50"
-                        value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        disabled={isLoading}
-                    />
-                </div>
-                <div className="grid gap-2">
-                    <Label htmlFor="confirm-password">Confirm Password</Label>
-                    <Input
-                        id="confirm-password"
-                        type="password"
-                        className="bg-muted/50"
-                        value={formData.confirmPassword}
-                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                        disabled={isLoading}
-                    />
-                </div>
-                <Button
-                    className="w-full font-semibold"
-                    onClick={handleRegister}
-                    disabled={isLoading}
-                >
-                    {isLoading ? "Creating Account..." : "Create Account"}
-                </Button>
-            </CardContent>
-            <CardFooter className="flex flex-wrap items-center justify-center gap-2">
-                <div className="text-sm text-muted-foreground">
-                    Already have an account?{" "}
-                    <Link
-                        href="/login"
-                        className="text-primary font-semibold hover:underline hover:underline-offset-4"
-                    >
-                        Sign in
-                    </Link>
-                </div>
-            </CardFooter>
-        </Card>
-    )
+            toast.success("user Created Successfully", {id: ToastId})
+        } catch (error) {
+            toast.error("Someting wents wrong, please try again.", {id: ToastId})
+        
+      }
+    },
+  });
+
+  return (
+    <Card className="border-none shadow-xl bg-background/80 backdrop-blur-md p-8">
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl font-bold tracking-tight">
+          Create an account
+        </CardTitle>
+        <CardDescription>
+          Enter your details below to create your SkillBridge account
+        </CardDescription>
+      </CardHeader>
+      <form
+        id="register-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          form.handleSubmit();
+        }}
+      >
+        <FieldGroup>
+          <form.Field
+            name="name"
+            children={(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <Field>
+                  <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                  <Input
+                    type="text"
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          />
+          <form.Field
+            name="email"
+            children={(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <Field>
+                  <FieldLabel htmlFor={field.name}>email</FieldLabel>
+                  <Input
+                    type="email"
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          />
+          <form.Field
+            name="password"
+            children={(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <Field>
+                  <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                  <Input
+                    type="password"
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          />
+        </FieldGroup>
+      </form>
+
+      <CardFooter className="flex flex-col flex-wrap items-center justify-center gap-2">
+        <Button form="register-form" type="submit">
+          Submit
+        </Button>
+        <div className="text-sm text-muted-foreground">
+          Already have an account?{" "}
+          <Link
+            href="/login"
+            className="text-primary font-semibold hover:underline hover:underline-offset-4"
+          >
+            Sign in
+          </Link>
+        </div>
+      </CardFooter>
+    </Card>
+  );
 }

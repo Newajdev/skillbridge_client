@@ -1,12 +1,14 @@
-import {createEnv} from "@t3-oss/env-nextjs"
-import {z} from "zod"
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
 
 export const env = createEnv({
-    server: {
-        API_URL: z.string().url()
-    },
-    client: {  },
-    runtimeEnv: {
-        API_URL: process.env.API_URL
-    }
-})
+  server: {
+    API_URL: z.string().url(),
+    AUTH_URL: z.string().url(),
+  },
+  client: {},
+  runtimeEnv: {
+    API_URL: process.env.API_URL,
+    AUTH_URL: process.env.AUTH_URL,
+  },
+});

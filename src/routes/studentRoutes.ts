@@ -4,23 +4,23 @@ export const studentRoutes: Route[] = [
     {
         title: "User Management",
         items: [
-             {
-        name: "Dashboard",
-        url: "/student-dashboard",
-    },
-    {
-        name: "Browse Tutors",
-        url: "/student-dashboard/browse-tutors",   
-    },
-    {
-        name: "My Bookings",
-        url: "/student-dashboard/my-bookings",   
-    },
-    {
-        name: "Profile",
-        url: "/student-dashboard/profile",
-    }
+            {
+                name: "Dashboard",
+                url: "/dashboard/student-dashboard",
+            },
+            {
+                name: "Browse Tutors",
+                url: "/dashboard/browse-tutors",
+            },
+            {
+                name: "My Bookings",
+                url: "/dashboard/my-bookings",
+            },
+            {
+                name: "Profile",
+                url: "/dashboard/profile",
+            }
         ]
-   }
+    }
 
 ]
