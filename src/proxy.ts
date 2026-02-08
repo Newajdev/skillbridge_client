@@ -3,7 +3,7 @@ import { userService } from "./services/user.servce";
 import { Roles } from "./constans/roles";
 
 export async function proxy(request: NextRequest) {
-    const pathname = request.nextUrl.pathname;
+  const pathname = request.nextUrl.pathname;
   let isAuthenticated = false;
   let isAdmin = false;
   let isTutor = false;
@@ -22,11 +22,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if(!isAdmin && pathname.startsWith("/dashboard")){
+  if (!isAdmin && pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/admin-dashboard", request.url));
-  }else if(!isTutor && pathname.startsWith("/dashboard")){
+  } else if (!isTutor && pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/tutor-dashboard", request.url));
-  }else if(!isStudent && pathname.startsWith("/dashboard/student")){
+  } else if (!isStudent && pathname.startsWith("/dashboard/student")) {
     return NextResponse.redirect(new URL("/student-dashboard", request.url));
   }
 
@@ -34,5 +34,11 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard", "/admin-dashboard", "/tutor-dashboard", "/student-dashboard"],
+  matcher: [
+    "/dashboard",
+    "/dashboard/:path*",
+    "/admin-dashboard/:path*",
+    "/tutor-dashboard/:path*",
+    "/student-dashboard/:path*",
+  ],
 };
