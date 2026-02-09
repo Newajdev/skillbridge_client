@@ -20,6 +20,7 @@ import { adminRoutes } from "@/routes/adminRoutes";
 import { tutorRoutes } from "@/routes/tutorRoutes";
 import { studentRoutes } from "@/routes/studentRoutes";
 import { Route } from "@/types/routes.type";
+import { Roles } from "@/constans/roles";
 
 export function AppSidebar({
     user,
@@ -30,13 +31,13 @@ export function AppSidebar({
     let routes: Route[] = []
 
     switch(user.role.toUpperCase()) {
-        case "ADMIN":
+        case Roles.ADMIN:
             routes = adminRoutes;
             break;
-        case "TUTOR":
+        case Roles.TUTOR:
             routes = tutorRoutes
             break;
-        case "STUDENT":
+        case Roles.STUDENT:
             routes = studentRoutes;
             break; 
         default:

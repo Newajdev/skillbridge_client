@@ -1,6 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
-import { userService } from "./services/user.servce";
 import { Roles } from "./constans/roles";
+import { env } from "@/env";
+
+// Use API_URL (Remote Backend) specifically for Middleware to avoid loopback issues
+const API_URL = env.API_URL;
+
+async function getSession(cookie: string) {
+  try {
+    const res = await fetch(`${API_URL}/auth/get-session`, {
+      headers: {
+        cookie: cookie,
+      },
+      cache: "no-store",
+    });
+    const session = await res.json();
+    if (!session) return null;
+    return session;
+
+  } catch (error) {
+    console.log("Error fetching session in proxy", error);
+    return null;
+  }
+}
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -9,25 +30,32 @@ export async function proxy(request: NextRequest) {
   let isTutor = false;
   let isStudent = false;
 
-  const { data } = await userService.getSesion();
+  const cookie = request.cookies.toString();
+  const data = await getSession(cookie);
 
-  if (data) {
+  if (data?.user) {
     isAuthenticated = true;
-    isAdmin = data.user.role === Roles.ADMIN;
-    isTutor = data.user.role === Roles.TUTOR;
-    isStudent = data.user.role === Roles.STUDENT;
+    isAdmin = data.user.role === Roles.admin;
+    isTutor = data.user.role === Roles.tutor;
+    isStudent = data.user.role === Roles.student;
   }
 
   if (!isAuthenticated) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (!isAdmin && pathname.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/admin-dashboard", request.url));
-  } else if (!isTutor && pathname.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/tutor-dashboard", request.url));
-  } else if (!isStudent && pathname.startsWith("/dashboard/student")) {
-    return NextResponse.redirect(new URL("/student-dashboard", request.url));
+  // Role-based protection:
+  // If user tries to access a dashboard not for their role, redirect them to the main /dashboard default
+  // The layout at /dashboard handles showing the correct slot.
+  
+  if (pathname.startsWith("/admin-dashboard") && !isAdmin) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+  if (pathname.startsWith("/tutor-dashboard") && !isTutor) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+  if (pathname.startsWith("/student-dashboard") && !isStudent) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();

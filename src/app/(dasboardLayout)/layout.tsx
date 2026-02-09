@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/layout/app-sidebar";
+import { redirect } from "next/navigation";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,8 +14,9 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-
-export default function DashboardLayout({
+import { Roles } from "@/constans/roles";
+import { userService } from "@/services/user.service";
+export default async function DashboardLayout({
   admin,
   tutor,
   student,
@@ -23,25 +25,15 @@ export default function DashboardLayout({
   tutor: React.ReactNode;
   student: React.ReactNode;
 }) {
-  // Mocking user info for now. In a real app, this would come from an auth hook/provider.
-  const userInfo = {
-    role: "STUDENT", // Change this to "ADMIN" or "TUTOR" to test
-    name: "John Doe",
-    email: "john.doe@skillbridge.com",
-  };
 
-  const renderDashboard = () => {
-    switch (userInfo.role.toUpperCase()) {
-      case "ADMIN":
-        return admin;
-      case "TUTOR":
-        return tutor;
-      case "STUDENT":
-        return student;
-      default:
-        return <div>Access Denied</div>;
-    }
-  };
+  const {data} = await userService.getSession();
+  
+  const userInfo = data?.user;
+
+  if (!userInfo) {
+    redirect("/login");
+  }
+
 
   return (
     <SidebarProvider>
@@ -65,7 +57,11 @@ export default function DashboardLayout({
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">{renderDashboard()}</div>
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          {userInfo.role === Roles.admin && admin}
+          {userInfo.role === Roles.tutor && tutor}
+          {userInfo.role === Roles.student && student}
+          </div>
       </SidebarInset>
     </SidebarProvider>
   );
