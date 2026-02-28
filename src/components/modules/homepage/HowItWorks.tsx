@@ -1,23 +1,23 @@
 import { CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
-import { Badge } from './badge';
+import { Badge } from "@/components/ui/badge";
 
 export default function HowItWorks() {
 
-    const features =[
-                {
-                  title: "Find your ideal tutor",
-                  desc: "Search by subject, price, and rating to find the perfect match.",
-                },
-                {
-                  title: "Schedule a session",
-                  desc: "Choose a time slot that works for you and book instantly.",
-                },
-                {
-                  title: "Start learning",
-                  desc: "Join your private session and achieve your learning goals.",
-                },
-              ]
+  const features = [
+    {
+      title: "Find your ideal tutor",
+      desc: "Search by subject, price, and rating to find the perfect match.",
+    },
+    {
+      title: "Schedule a session",
+      desc: "Choose a time slot that works for you and book instantly.",
+    },
+    {
+      title: "Start learning",
+      desc: "Join your private session and achieve your learning goals.",
+    },
+  ]
   return (
     <section className="py-24 bg-background border-t">
       <div className="container mx-auto px-4">

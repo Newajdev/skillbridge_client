@@ -1,3 +1,34 @@
+export interface Booking {
+  status: "CONFIRMED" | "CANCELLED" | "PENDING";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AvailabilitySlot {
+  id: string;
+  tutorId: string;
+  day: string;
+  startTime: string;
+  endTime: string;
+  bookings?: Booking[];
+}
+
+export interface Review {
+  id: string;
+  bookingId: string;
+  tutorId: string;
+  studentId: string;
+  rating: string;
+  comment: string;
+  createdAt: string;
+  student?: {
+    user: {
+      name: string;
+      image: string;
+    };
+  };
+}
+
 export interface tutor {
   id: string;
   userId: string;
@@ -12,8 +43,8 @@ export interface tutor {
     id: string;
     name: string;
     createdAt: string;
-  updatedAt: string;
-  },
+    updatedAt: string;
+  };
   createdAt: string;
   updatedAt: string;
   user: {
@@ -27,5 +58,6 @@ export interface tutor {
     createdAt: string;
     updatedAt: string;
   };
+  availabilitySlots?: AvailabilitySlot[];
+  reviews?: Review[];
 }
-

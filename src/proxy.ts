@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Roles } from "./constans/roles";
+import { Roles } from "./constants/roles";
 import { env } from "@/env";
 
 const API_URL = env.API_URL;
@@ -46,15 +46,15 @@ export async function proxy(request: NextRequest) {
   // Role-based protection:
   // If user tries to access a dashboard not for their role, redirect them to the main /dashboard default
   // The layout at /dashboard handles showing the correct slot.
-  
+
   if (pathname.startsWith("/admin-dashboard") && !isAdmin) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
   if (pathname.startsWith("/tutor-dashboard") && !isTutor) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
   if (pathname.startsWith("/student-dashboard") && !isStudent) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();
