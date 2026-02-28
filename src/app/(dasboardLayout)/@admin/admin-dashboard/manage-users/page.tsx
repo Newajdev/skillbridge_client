@@ -1,8 +1,11 @@
-export default function ManageUsersPage() {
+import React from 'react';
+import { adminService } from "@/services/admin.service";
+import ManageUsersClient from "@/components/modules/dashboard/ManageUsersClient";
+
+export default async function ManageUsersPage() {
+    const { data: users } = await adminService.getAllUsers();
+
     return (
-        <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">Manage Users</h1>
-            <p>This is the Manage Users page placeholder.</p>
-        </div>
+        <ManageUsersClient initialUsers={users || []} />
     );
 }

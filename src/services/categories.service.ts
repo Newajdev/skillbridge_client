@@ -6,9 +6,9 @@ const getAllCategories = async () => {
   try {
     const result = await fetch(`${API_URL}/public/categories`);
 
-    const data = await result.json();
+    const response = await result.json();
 
-    return { data: data, error: null };
+    return { data: response.data || response, error: null };
   } catch (error) {
     return { data: null, error: { message: "Something Went Wrong", error } };
   }

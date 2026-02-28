@@ -1,8 +1,11 @@
-export default function ManageBookingsPage() {
+import React from 'react';
+import ManageBookingsAdminClient from "@/components/modules/dashboard/ManageBookingsAdminClient";
+import { bookingService } from "@/services/booking.service";
+
+export default async function ManageBookingsPage() {
+    const { data: bookings } = await bookingService.getBookings();
+
     return (
-        <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">Manage Bookings</h1>
-            <p>This is the Manage Bookings page placeholder.</p>
-        </div>
+        <ManageBookingsAdminClient initialBookings={bookings || []} />
     );
 }

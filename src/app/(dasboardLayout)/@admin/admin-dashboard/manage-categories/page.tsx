@@ -1,8 +1,14 @@
-export default function ManageCategoriesPage() {
+import React from 'react';
+import ManageCategoriesClient from "@/components/modules/dashboard/ManageCategoriesClient";
+import { categoryService } from "@/services/categories.service";
+
+export default async function ManageCategoriesPage() {
+    const { data: categoriesResponse } = await categoryService.getAllCategories();
+
+    // API typically wraps actual data array in a `data` property
+    const categoriesList = categoriesResponse?.data || categoriesResponse || [];
+
     return (
-        <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">Manage Categories</h1>
-            <p>This is the Manage Categories page placeholder.</p>
-        </div>
+        <ManageCategoriesClient initialCategories={Array.isArray(categoriesList) ? categoriesList : []} />
     );
 }

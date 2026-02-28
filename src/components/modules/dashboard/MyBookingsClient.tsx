@@ -15,28 +15,12 @@ import {
     Filter,
     Clock,
     CreditCard,
-    Sparkles,
-    Star,
-    MessageSquare,
-    Loader2,
-    ArrowUpRight
+    Sparkles
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from 'next/link';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { createReviewAction } from "@/actions/review.actions";
-import { ReviewModal } from "./ReviewModal";
 
 interface MyBookingsClientProps {
     initialBookings: any[];
@@ -44,20 +28,7 @@ interface MyBookingsClientProps {
 
 export default function MyBookingsClient({ initialBookings }: MyBookingsClientProps) {
     const [bookings, setBookings] = useState(initialBookings);
-    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-    const [selectedTutor, setSelectedTutor] = useState<any>(null);
-    // Removed: const [rating, setRating] = useState(5);
-    // Removed: const [comment, setComment] = useState("");
-    // Removed: const [isSubmitting, setIsSubmitting] = useState(false);
-
     const cn = (...inputs: any[]) => inputs.filter(Boolean).join(" ");
-
-    const handleOpenReview = (tutor: any) => {
-        setSelectedTutor(tutor);
-        setIsReviewModalOpen(true);
-    };
-
-    // Removed: handleSubmitReview function
 
     return (
         <div className="min-h-screen bg-[#f8fafc]/50">
@@ -182,16 +153,6 @@ export default function MyBookingsClient({ initialBookings }: MyBookingsClientPr
                                                             </Button>
                                                         )}
 
-                                                        {booking.status === "COMPLETED" && (
-                                                            <Button
-                                                                size="sm"
-                                                                variant="outline"
-                                                                className="rounded-2xl border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white font-black px-5 transition-all active:scale-95 flex items-center gap-2"
-                                                                onClick={() => handleOpenReview(booking.tutor)}
-                                                            >
-                                                                <Star className="h-4 w-4 fill-current" /> Leave Review
-                                                            </Button>
-                                                        )}
 
                                                         <Button size="icon" variant="ghost" className="h-10 w-10 rounded-full hover:bg-white hover:shadow-md transition-all">
                                                             <MoreHorizontal className="h-5 w-5 text-slate-400" />
@@ -221,12 +182,6 @@ export default function MyBookingsClient({ initialBookings }: MyBookingsClientPr
                 </Card>
             </div>
 
-            {/* Review Modal Component */}
-            <ReviewModal
-                isOpen={isReviewModalOpen}
-                onOpenChange={setIsReviewModalOpen}
-                selectedTutor={selectedTutor}
-            />
         </div>
     );
 }

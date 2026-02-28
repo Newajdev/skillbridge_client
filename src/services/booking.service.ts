@@ -19,8 +19,8 @@ const getBookings = async () => {
             return { data: null, error: { message: `Server error: ${result.status}` } };
         }
 
-        const data = await result.json();
-        return { data: data, error: null };
+        const response = await result.json();
+        return { data: response.data || response, error: null };
     } catch (error) {
         return { data: null, error: { message: "Network error fetching bookings", error } };
     }

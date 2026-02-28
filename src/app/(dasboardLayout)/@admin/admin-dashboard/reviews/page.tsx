@@ -1,8 +1,11 @@
-export default function ReviewsPage() {
+import React from 'react';
+import ReviewModerationClient from "@/components/modules/dashboard/ReviewModerationClient";
+import { adminService } from "@/services/admin.service";
+
+export default async function ManageReviewsPage() {
+    const { data: reviews } = await adminService.getAllReviews();
+
     return (
-        <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">Reviews</h1>
-            <p>This is the Reviews page placeholder.</p>
-        </div>
+        <ReviewModerationClient initialReviews={reviews || []} />
     );
 }

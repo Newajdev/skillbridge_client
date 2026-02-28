@@ -1,8 +1,11 @@
-export default function AdminSettingsPage() {
+import React from 'react';
+import { userService } from "@/services/user.service";
+import AdminSettingsClient from "@/components/modules/dashboard/AdminSettingsClient";
+
+export default async function AdminSettingsPage() {
+    const { data: profile } = await userService.getProfile();
+
     return (
-        <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">Settings</h1>
-            <p>This is the Settings page placeholder.</p>
-        </div>
+        <AdminSettingsClient initialProfile={profile?.adminProfile || profile?.user || {}} />
     );
 }
