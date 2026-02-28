@@ -22,6 +22,8 @@ async function getSession(cookie: string) {
   }
 }
 
+// Note: This logic must be in a file named `middleware.ts` in the `src` directory 
+// and the function should be named `middleware` for Next.js to use it automatically.
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   let isAuthenticated = false;
@@ -41,6 +43,13 @@ export async function proxy(request: NextRequest) {
 
   if (!isAuthenticated) {
     return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // Redirect /dashboard to the specific role-based dashboard
+  if (pathname === "/dashboard") {
+    if (isAdmin) return NextResponse.redirect(new URL("/admin-dashboard", request.url));
+    if (isTutor) return NextResponse.redirect(new URL("/tutor-dashboard", request.url));
+    if (isStudent) return NextResponse.redirect(new URL("/student-dashboard", request.url));
   }
 
   // Role-based protection:

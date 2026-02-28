@@ -29,4 +29,51 @@ export const userService = {
       return { data: null, error: { message: "Something Went Wrong" } };
     }
   },
+  getProfile: async function () {
+    try {
+      const cookieStore = await cookies();
+
+      const res = await fetch(`${env.API_URL}/profile/me`, {
+        headers: {
+          Cookie: cookieStore.toString(),
+        },
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        return { data: null, error: { message: "Failed to fetch profile" } };
+      }
+
+      const response = await res.json();
+      return { data: response.data, error: null };
+    } catch (err) {
+      console.error(err);
+      return { data: null, error: { message: "Something Went Wrong" } };
+    }
+  },
+  updateProfile: async function (data: any) {
+    try {
+      const cookieStore = await cookies();
+
+      const res = await fetch(`${env.API_URL}/profile/update/me`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieStore.toString(),
+        },
+        body: JSON.stringify(data),
+      });
+
+      const response = await res.json();
+
+      if (!res.ok) {
+        return { data: null, error: { message: response.message || "Failed to update profile" } };
+      }
+
+      return { data: response.data, error: null };
+    } catch (err) {
+      console.error(err);
+      return { data: null, error: { message: "Something Went Wrong" } };
+    }
+  }
 };

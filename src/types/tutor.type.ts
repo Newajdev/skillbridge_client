@@ -29,6 +29,14 @@ export interface Review {
   };
 }
 
+export interface TutorStats {
+  totalBookings: number;
+  completedBookings: number;
+  bookingCompletionRate: number;
+  totalReviews: number;
+  averageRating: number;
+}
+
 export interface tutor {
   id: string;
   userId: string;
@@ -60,4 +68,5 @@ export interface tutor {
   };
   availabilitySlots?: AvailabilitySlot[];
   reviews?: Review[];
+  stats?: TutorStats;
 }

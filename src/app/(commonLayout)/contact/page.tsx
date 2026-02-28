@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import ContactForm from "@/components/ui/ContactForm";
+import ContactForm from "@/components/modules/contact/ContactForm";
 
 export default function ContactPage() {
   return (

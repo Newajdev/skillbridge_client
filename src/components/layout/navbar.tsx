@@ -1,5 +1,8 @@
 "use client";
 
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+
 import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -88,33 +91,20 @@ const Navbar = ({
   },
   className,
 }: Navbar1Props) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<{ name: string; avatar: string; email: string } | null>(null);
+  const { data: session } = authClient.useSession();
+  const router = useRouter();
 
-  useEffect(() => {
-    // Check initial state
-    const updateAuthState = () => {
-      const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-      setIsLoggedIn(loggedIn);
-      if (loggedIn) {
-        const userData = localStorage.getItem("user");
-        if (userData) setUser(JSON.parse(userData));
-      } else {
-        setUser(null);
-      }
-    };
+  const isLoggedIn = !!session;
+  const user = session?.user;
 
-    updateAuthState();
-
-    // Listen for custom event
-    window.addEventListener("auth-change", updateAuthState);
-    return () => window.removeEventListener("auth-change", updateAuthState);
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("user");
-    window.dispatchEvent(new Event("auth-change"));
+  const handleLogout = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/");
+        },
+      },
+    });
   };
 
   return (
@@ -146,10 +136,10 @@ const Navbar = ({
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-12 flex items-center gap-3 px-3 rounded-full hover:bg-muted font-bold text-[#173e72]">
                     <Avatar className="h-9 w-9 border-2 border-primary/20">
-                      <AvatarImage src={user.avatar} alt={user.name || "User"} />
+                      <AvatarImage src={user.image || ""} alt={user.name || "User"} />
                       <AvatarFallback className="bg-primary/10 text-primary uppercase">{user.name?.[0] || "U"}</AvatarFallback>
                     </Avatar>
-                    <span className="max-w-[120px] truncate">{user.name}</span>
+                    <span className="max-w-30 truncate">{user.role || "user"}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -165,18 +155,6 @@ const Navbar = ({
                       <Link href="/dashboard" className="cursor-pointer">
                         <LayoutDashboard className="mr-2 h-4 w-4" />
                         <span>Dashboard</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/profile" className="cursor-pointer">
-                        <User className="mr-2 h-4 w-4" />
-                        <span>Profile</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/settings" className="cursor-pointer">
-                        <Settings className="mr-2 h-4 w-4" />
-                        <span>Settings</span>
                       </Link>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
@@ -235,7 +213,7 @@ const Navbar = ({
                   {isLoggedIn && user && (
                     <div className="flex items-center gap-4 bg-muted/50 p-4 rounded-2xl">
                       <Avatar className="h-12 w-12 border-2 border-primary/20">
-                        <AvatarImage src={user.avatar} alt={user.name || "User"} />
+                        <AvatarImage src={user.image || ""} alt={user.name || "User"} />
                         <AvatarFallback className="bg-primary/10 text-primary text-xl font-bold">{user.name?.[0] || "U"}</AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col">

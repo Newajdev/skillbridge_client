@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Roles } from "@/constants/roles";
 import { userService } from "@/services/user.service";
+import { ProfileCompletePopup } from "@/components/modules/dashboard/ProfileCompletePopup";
 export default async function DashboardLayout({
   admin,
   tutor,
@@ -34,33 +35,39 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
+  const { data: profileData } = await userService.getProfile();
+
+  let isProfileComplete = true;
+  let profileUrl = "/";
+
+  if (userInfo.role.toUpperCase() === Roles.tutor) {
+    profileUrl = "/tutor-dashboard/profile";
+    const tp = profileData?.tutorProfile;
+    // Check if tutor profile is complete (bio, phone, rate, and experience are mandatory)
+    if (!tp || !tp.bio || !tp.phone || tp.hourlyRate === null || tp.experience === null) {
+      isProfileComplete = false;
+    }
+  } else if (userInfo.role.toUpperCase() === Roles.student) {
+    profileUrl = "/student-dashboard/profile";
+    const sp = profileData?.studentProfile;
+    // Check if student profile is complete (phone and bio are good to have)
+    if (!sp || !sp.phone || !sp.bio) {
+      isProfileComplete = false;
+    }
+  } else if (userInfo.role.toUpperCase() === Roles.admin) {
+    profileUrl = "/admin-dashboard/settings";
+  }
+
 
   return (
     <SidebarProvider>
       <AppSidebar user={userInfo} />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator
-            orientation="vertical"
-            className="mr-2 data-[orientation=vertical]:h-4"
-          />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Overview</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          {userInfo.role.toLowerCase() === Roles.admin && admin}
-          {userInfo.role.toLowerCase() === Roles.tutor && tutor}
-          {userInfo.role.toLowerCase() === Roles.student && student}
+        <div className="flex flex-1 flex-col gap-4">
+          {userInfo.role.toUpperCase() === Roles.admin && admin}
+          {userInfo.role.toUpperCase() === Roles.tutor && tutor}
+          {userInfo.role.toUpperCase() === Roles.student && student}
+          <ProfileCompletePopup isComplete={isProfileComplete} profileUrl={profileUrl} />
         </div>
       </SidebarInset>
     </SidebarProvider>

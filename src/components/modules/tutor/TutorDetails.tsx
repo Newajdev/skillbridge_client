@@ -1,15 +1,85 @@
-import { Star, Clock, GraduationCap, ShieldCheck } from "lucide-react";
+"use client";
+
+import { Star, Clock, GraduationCap, ShieldCheck, Calendar } from "lucide-react";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { tutor } from "@/types/tutor.type";
+import { authClient } from "@/lib/auth-client";
+import { useRouter, usePathname } from "next/navigation";
+import { useState } from "react";
+import { publicService } from "@/services/public.service";
+import { toast } from "sonner";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { AvailabilitySlot } from "@/types/tutor.type";
 
 interface TutorDetailsProps {
     tutor: tutor;
 }
 
 export default function TutorDetails({ tutor }: TutorDetailsProps) {
+    const { data: session } = authClient.useSession();
+    const router = useRouter();
+    const pathname = usePathname();
+    const [isBookingOpen, setIsBookingOpen] = useState(false);
+    const [availableSlots, setAvailableSlots] = useState<AvailabilitySlot[]>([]);
+    const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+    const [isLoadingSlots, setIsLoadingSlots] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleBookSession = async () => {
+        if (!session?.user) {
+            router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
+            return;
+        }
+
+        console.log("user ase");
+        setIsBookingOpen(true);
+        setIsLoadingSlots(true);
+
+        const { data, error } = await publicService.getTutorSlots(tutor.id);
+        if (error) {
+            toast.error("Failed to load available slots");
+        } else if (data?.success) {
+            setAvailableSlots(data.data || []);
+        }
+        setIsLoadingSlots(false);
+    };
+
+    const handleConfirmBooking = async () => {
+        if (!selectedSlotId) {
+            toast.error("Please select a slot first");
+            return;
+        }
+
+        setIsSubmitting(true);
+        const toastId = toast.loading("Confirming your booking...");
+
+        const { data, error } = await publicService.createBooking(selectedSlotId);
+
+        if (error) {
+            toast.error("Failed to create booking", { id: toastId });
+        } else if (data?.success) {
+            toast.success("Booking confirmed successfully!", { id: toastId });
+            setIsBookingOpen(false);
+            setSelectedSlotId(null);
+            // Optional: refresh page or data
+            router.refresh();
+        } else {
+            toast.error(data?.message || "Booking failed", { id: toastId });
+        }
+        setIsSubmitting(false);
+    };
+
     return (
         <div className="min-h-screen bg-linear-to-b from-muted/30 via-background to-background py-16">
             <div className="container mx-auto px-4">
@@ -33,7 +103,7 @@ export default function TutorDetails({ tutor }: TutorDetailsProps) {
                                         </Badge>
                                         <div className="flex items-center bg-yellow-400 px-2 py-0.5 rounded-lg text-black font-bold text-sm">
                                             <Star className="h-3.5 w-3.5 fill-black mr-1" />
-                                            {tutor.averageRate}
+                                            {tutor.stats?.averageRating || tutor.averageRate}
                                         </div>
                                     </div>
                                 </div>
@@ -71,7 +141,10 @@ export default function TutorDetails({ tutor }: TutorDetailsProps) {
                                     </div>
                                 </div>
 
-                                <Button className="w-full h-14 rounded-2xl font-black text-lg bg-[#173e72] hover:bg-[#1a4b8a] shadow-xl shadow-primary/20 transition-all active:scale-95">
+                                <Button
+                                    onClick={handleBookSession}
+                                    className="w-full h-14 rounded-2xl font-black text-lg bg-[#173e72] hover:bg-[#1a4b8a] shadow-xl shadow-primary/20 transition-all active:scale-95"
+                                >
                                     Book a Session
                                 </Button>
                             </CardContent>
@@ -177,7 +250,11 @@ export default function TutorDetails({ tutor }: TutorDetailsProps) {
                                                             {review.rating}
                                                         </div>
                                                     </div>
-                                                    <p className="text-muted-foreground italic leading-relaxed">&ldquo;{review.comment}&rdquo;</p>
+                                                    <div className="flex-1">
+                                                        <p className="text-muted-foreground italic leading-relaxed line-clamp-4 group-hover:line-clamp-none transition-all duration-300">
+                                                            &ldquo;{review.comment}&rdquo;
+                                                        </p>
+                                                    </div>
                                                 </Card>
                                             );
                                         })}
@@ -193,14 +270,14 @@ export default function TutorDetails({ tutor }: TutorDetailsProps) {
                             </h2>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
                                 {[
-                                    { label: "Students", value: "150+" },
-                                    { label: "Sessions", value: tutor.totalSessions || "500+" },
-                                    { label: "Rating", value: tutor.averageRate },
-                                    { label: "Response", value: "99%" },
+                                    { label: "Total Bookings", value: tutor.stats?.totalBookings || 0 },
+                                    { label: "Completed", value: tutor.stats?.completedBookings || 0 },
+                                    { label: "Success Rate", value: `${tutor.stats?.bookingCompletionRate || 0}%` },
+                                    { label: "Avg Rating", value: tutor.stats?.averageRating || 0 },
                                 ].map((stat, i) => (
-                                    <div key={i} className="text-center p-6 rounded-3xl bg-white/40 shadow-lg border border-white/20">
+                                    <div key={i} className="text-center p-6 rounded-3xl bg-white/40 shadow-lg border border-white/20 transition-all hover:bg-white/60 hover:scale-[1.02]">
                                         <p className="text-3xl font-black text-primary">{stat.value}</p>
-                                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">{stat.label}</p>
+                                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-1">{stat.label}</p>
                                     </div>
                                 ))}
                             </div>
@@ -208,6 +285,103 @@ export default function TutorDetails({ tutor }: TutorDetailsProps) {
                     </div>
                 </div>
             </div>
+
+            {/* Booking Dialog */}
+            <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
+                <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden bg-white/95 backdrop-blur-xl border-none shadow-2xl rounded-[2rem]">
+                    <DialogHeader className="p-8 pb-4 text-center">
+                        <DialogTitle className="text-2xl font-black text-[#173e72]">Select a Session Slot</DialogTitle>
+                        <DialogDescription className="text-muted-foreground font-medium">
+                            Choose a time that works for you with {tutor.user?.name}
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="px-8 py-4 max-h-[400px] overflow-y-auto custom-scrollbar">
+                        {isLoadingSlots ? (
+                            <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                                <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                                <p className="text-sm font-bold text-[#173e72] animate-pulse">Fetching available slots...</p>
+                            </div>
+                        ) : availableSlots.length > 0 ? (
+                            <div className="grid grid-cols-1 gap-3">
+                                {availableSlots.map((slot) => {
+                                    const isSelected = selectedSlotId === slot.id;
+                                    const isBooked = slot.bookings && slot.bookings.length > 0;
+
+                                    return (
+                                        <button
+                                            key={slot.id}
+                                            disabled={isBooked}
+                                            onClick={() => setSelectedSlotId(slot.id)}
+                                            className={cn(
+                                                "w-full p-4 rounded-2xl flex items-center justify-between transition-all duration-300 border-2 text-left group",
+                                                isSelected
+                                                    ? "bg-[#173e72] border-[#173e72] text-white shadow-lg scale-[1.02]"
+                                                    : isBooked
+                                                        ? "bg-muted/50 border-transparent opacity-60 cursor-not-allowed"
+                                                        : "bg-white border-primary/10 hover:border-[#173e72]/40 hover:bg-primary/5 shadow-sm"
+                                            )}
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <div className={cn(
+                                                    "w-12 h-12 rounded-xl flex items-center justify-center transition-colors",
+                                                    isSelected ? "bg-white/20" : "bg-primary/10 text-primary group-hover:bg-[#173e72] group-hover:text-white"
+                                                )}>
+                                                    <Clock className="h-5 w-5" />
+                                                </div>
+                                                <div>
+                                                    <div className="flex flex-col gap-0.5 mb-1">
+                                                        <span className={cn("text-[10px] uppercase tracking-widest font-black opacity-60", isSelected ? "text-white" : "text-primary")}>
+                                                            {slot.day}
+                                                        </span>
+                                                        <p className={cn("font-bold text-base", isSelected ? "text-white" : "text-[#173e72]")}>
+                                                            {new Date(slot.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(slot.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </p>
+                                                    </div>
+                                                    <p className={cn("text-xs font-medium opacity-70", isSelected ? "text-white/80" : "text-muted-foreground")}>
+                                                        {isBooked ? "Currently unavailable" : "Available for booking"}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            {isSelected && (
+                                                <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center">
+                                                    <div className="w-2.5 h-2.5 rounded-full bg-[#173e72]" />
+                                                </div>
+                                            )}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <div className="text-center py-12 bg-muted/30 rounded-3xl border-2 border-dashed border-primary/10">
+                                <Calendar className="h-10 w-10 text-muted-foreground mx-auto mb-3 opacity-20" />
+                                <p className="text-sm font-bold text-[#173e72]">No available slots found</p>
+                                <p className="text-xs text-muted-foreground">Please check back later</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <DialogFooter className="p-8 pt-4 flex flex-col gap-3 sm:flex-row sm:gap-4">
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setIsBookingOpen(false);
+                                setSelectedSlotId(null);
+                            }}
+                            className="w-full sm:flex-1 h-12 rounded-xl font-bold border-2 hover:bg-accent transition-all"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleConfirmBooking}
+                            disabled={!selectedSlotId || isSubmitting}
+                            className="w-full sm:flex-1 h-12 rounded-xl font-black bg-[#173e72] hover:bg-[#1a4b8a] text-white shadow-xl shadow-primary/20 transition-all active:scale-[0.98] disabled:opacity-50"
+                        >
+                            {isSubmitting ? "Processing..." : "Confirm Booking"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
