@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
-import { tutor } from "@/types/tutor.type";
+import { TutorProfile as tutor } from "@/types";
 
 export default function TutorCard({ tutor }: { tutor: tutor }) {
     return (
@@ -14,7 +14,7 @@ export default function TutorCard({ tutor }: { tutor: tutor }) {
                 <div className="relative h-64 w-full overflow-hidden">
                     <Image
                         src={tutor.user?.image || "/placeholder-avatar.png"}
-                        alt={tutor.user?.name}
+                        alt={tutor.user?.name || "Tutor Name"}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-110 rounded-t-2xl"
                     />

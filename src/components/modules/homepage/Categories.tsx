@@ -3,12 +3,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Category } from "@/types/category.type";
+import { Category } from "@/types";
 
 
 
 export default async function Categories({ categories }: { categories: Category[] | undefined }) {
-  const showCategories = categories?.slice(0,8)
+  const showCategories = categories?.slice(0, 8)
   return (
     <section className="py-24 bg-background">
       <div className="container mx-auto px-4">

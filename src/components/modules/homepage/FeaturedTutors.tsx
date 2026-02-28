@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
-import { tutor } from "@/types/tutor.type";
+import { TutorProfile as tutor } from "@/types";
 
 export default async function FeaturedTutors({ tutors }: { tutors: tutor[] | undefined }) {
   const showTutor = tutors?.slice(0, 3)
@@ -29,14 +29,14 @@ export default async function FeaturedTutors({ tutors }: { tutors: tutor[] | und
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {showTutor?.map((tutor: tutor) => (
             <Card
-              key={tutor.user.id}
+              key={tutor.user?.id || tutor.id}
               className="group relative overflow-hidden border border-white/20 shadow-2xl bg-white/40 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-primary/10 rounded-3xl"
             >
               <CardContent className="p-0">
                 <div className="relative h-54 w-full overflow-hidden">
                   <Image
                     src={tutor.user?.image || "/placeholder-avatar.png"}
-                    alt={tutor.user?.name}
+                    alt={tutor.user?.name || "Tutor Name"}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110 rounded-t-2xl"
                   />

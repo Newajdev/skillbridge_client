@@ -1,2 +1,2 @@
 export * from "./routes.type";
-export * from "./category.type";
+export * from "./global.type";

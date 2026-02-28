@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import TutorFilters from "./TutorFilters";
 import TutorList from "./TutorList";
-import { tutor } from "@/types/tutor.type";
+import { TutorProfile as tutor } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Sparkles, SlidersHorizontal, ArrowRight, Zap, Loader2 } from "lucide-react";

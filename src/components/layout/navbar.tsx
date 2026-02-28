@@ -139,7 +139,7 @@ const Navbar = ({
                       <AvatarImage src={user.image || ""} alt={user.name || "User"} />
                       <AvatarFallback className="bg-primary/10 text-primary uppercase">{user.name?.[0] || "U"}</AvatarFallback>
                     </Avatar>
-                    <span className="max-w-30 truncate">{user.role || "user"}</span>
+                    <span className="max-w-30 truncate">{(user as any).role || "user"}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end" forceMount>

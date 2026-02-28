@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { tutor } from "@/types/tutor.type";
+import { TutorProfile as tutor } from "@/types";
 import { authClient } from "@/lib/auth-client";
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
@@ -20,7 +20,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { AvailabilitySlot } from "@/types/tutor.type";
+import { Slot as AvailabilitySlot } from "@/types";
 
 interface TutorDetailsProps {
     tutor: tutor;
@@ -90,7 +90,7 @@ export default function TutorDetails({ tutor }: TutorDetailsProps) {
                             <div className="relative h-96 w-full">
                                 <Image
                                     src={tutor.user?.image || "/placeholder-avatar.png"}
-                                    alt={tutor.user?.name}
+                                    alt={tutor.user?.name || "Tutor Name"}
                                     fill
                                     className="object-cover"
                                 />
@@ -171,8 +171,8 @@ export default function TutorDetails({ tutor }: TutorDetailsProps) {
                                     Available Slots
                                 </h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {tutor.availabilitySlots.map((slot) => {
-                                        const isBooked = slot.bookings?.some(booking => {
+                                    {tutor.availabilitySlots.map((slot: AvailabilitySlot) => {
+                                        const isBooked = slot.bookings?.some((booking: any) => {
                                             if (booking.status !== "CONFIRMED") return false;
                                             const bookingDate = new Date(booking.updatedAt);
                                             const now = new Date();
@@ -194,8 +194,8 @@ export default function TutorDetails({ tutor }: TutorDetailsProps) {
                                                         <div>
                                                             <p className="text-sm font-bold text-[#173e72] uppercase tracking-wide">{slot.day}</p>
                                                             <p className="text-xs text-muted-foreground">
-                                                                {new Date(slot.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -
-                                                                {new Date(slot.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                                {new Date(slot.startTime as string).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -
+                                                                {new Date(slot.endTime as string).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -218,7 +218,7 @@ export default function TutorDetails({ tutor }: TutorDetailsProps) {
                                 </h2>
                                 <div className="overflow-x-auto pb-6 -mx-4 px-4 md:-mx-8 md:px-8">
                                     <div className="flex flex-nowrap gap-6 snap-x snap-mandatory">
-                                        {tutor.reviews.map((review) => {
+                                        {tutor.reviews.map((review: any) => {
                                             const studentName = review.student?.user?.name?.trim() || "Skillbridge Student";
                                             const studentImage = review.student?.user?.image;
 
@@ -242,7 +242,7 @@ export default function TutorDetails({ tutor }: TutorDetailsProps) {
                                                                 <p className="text-sm font-bold text-[#173e72]">
                                                                     {studentName}
                                                                 </p>
-                                                                <p className="text-xs text-muted-foreground">{new Date(review.createdAt).toLocaleDateString()}</p>
+                                                                <p className="text-xs text-muted-foreground">{new Date(review.createdAt as string).toLocaleDateString()}</p>
                                                             </div>
                                                         </div>
                                                         <div className="flex items-center bg-yellow-400/10 text-yellow-700 px-2 py-1 rounded-lg text-sm font-bold">

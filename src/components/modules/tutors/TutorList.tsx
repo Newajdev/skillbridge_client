@@ -2,7 +2,7 @@
 import React from 'react'
 import { GraduationCap, ArrowRight, BookOpen, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { tutor } from '@/types/tutor.type';
+import { TutorProfile as tutor } from "@/types";
 import TutorCard from './TutorCard';
 
 interface TutorListProps {

@@ -2,7 +2,7 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import TutorFilters from "@/components/modules/tutors/TutorFilters";
 import TutorList from "@/components/modules/tutors/TutorList";
-import { tutor } from "@/types/tutor.type";
+import { TutorProfile as tutor } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Search, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { publicService } from "@/services/public.service";

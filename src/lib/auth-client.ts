@@ -1,11 +1,8 @@
 import { createAuthClient } from "better-auth/react";
-import { env } from "@/env";
-
-
 
 export const authClient = createAuthClient({
-  baseURL: env.NEXT_PUBLIC_AUTH_URL,
-  advanced: {
-    cookiePrefix: "skillbridge",
+  baseURL: typeof window !== "undefined" ? window.location.origin : "",
+  fetchOptions: {
+    credentials: "include",
   },
 });

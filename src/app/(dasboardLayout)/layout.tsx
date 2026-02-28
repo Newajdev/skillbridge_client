@@ -1,5 +1,7 @@
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { redirect } from "next/navigation";
+
+export const dynamic = 'force-dynamic';
 import {
   Breadcrumb,
   BreadcrumbItem,

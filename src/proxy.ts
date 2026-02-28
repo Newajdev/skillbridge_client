@@ -22,10 +22,23 @@ async function getSession(cookie: string) {
   }
 }
 
-// Note: This logic must be in a file named `middleware.ts` in the `src` directory 
-// and the function should be named `middleware` for Next.js to use it automatically.
+
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+
+  // Skip middleware for verify-email route
+  if (pathname.startsWith("/verify-email")) {
+    return NextResponse.next();
+  }
+
+  // Check for session token in cookies
+  const sessionToken = request.cookies.get("better-auth.session_token");
+
+  //* User is not authenticated at all
+  if (!sessionToken) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   let isAuthenticated = false;
   let isAdmin = false;
   let isTutor = false;
