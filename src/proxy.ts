@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { Roles } from "./constans/roles";
 import { env } from "@/env";
 
-// Use API_URL (Remote Backend) specifically for Middleware to avoid loopback issues
 const API_URL = env.API_URL;
 
 async function getSession(cookie: string) {

@@ -1,21 +1,17 @@
-import React from "react";
+
 import { Card, CardContent } from "./card";
 import { Badge } from "./badge";
 import { Button } from "./button";
 import Link from "next/link";
+import { categoryService } from "@/services/categories.service";
+import { Category } from "@/types/category.type";
 
-export default function Categories() {
 
-    const Catagory = [
-            { title: "Mathematics", tutors: 120, icon: "∑" },
-            { title: "Computer Science", tutors: 85, icon: "{/}" },
-            { title: "English Language", tutors: 95, icon: "A" },
-            { title: "Physics", tutors: 64, icon: "⚛" },
-            { title: "Chemistry", tutors: 48, icon: "🧪" },
-            { title: "Graphic Design", tutors: 32, icon: "🎨" },
-            { title: "Business & Finance", tutors: 76, icon: "📈" },
-            { title: "Music & Art", tutors: 45, icon: "🎵" },
-          ]
+
+export default async function Categories() {
+  const res = await  categoryService.getAllCategories()
+  const Categories = res.data.data;
+
   return (
     <section className="py-24 bg-background">
       <div className="container mx-auto px-4">
@@ -37,17 +33,16 @@ export default function Categories() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {Catagory.map((cat) => (
-            <Card key={cat.title} className="hover:border-primary/50 transition-all hover:shadow-lg group">
+          {Categories.map((cat:Category) => (
+            <Card key={cat.id} className="hover:border-primary/50 transition-all hover:shadow-lg group">
                 <CardContent className="p-8 flex flex-col items-center text-center space-y-4">
                   <div className="w-16 h-16 rounded-2xl bg-[#173e72]/5 flex items-center justify-center text-3xl group-hover:bg-[#173e72]/10 transition-colors">
-                    {cat.icon}
+                    {cat.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-[#173e72]">
-                      {cat.title}
+                      {cat.name}
                     </h3>
-                    <p className="text-muted-foreground">{cat.tutors} Tutors</p>
                   </div>
                 </CardContent>
               </Card>

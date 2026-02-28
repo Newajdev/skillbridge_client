@@ -10,8 +10,6 @@ export const userService = {
 
       console.log(cookieStore.toString());
 
-      // Use AUTH_URL which now points to the local proxy (e.g. http://localhost:3000/api/auth)
-      // The proxy forwards it to the backend. The key is that the cookie is attached.
       const res = await fetch(`${AUTH_URL}/get-session`, {
         headers: {
           Cookie: cookieStore.toString(),

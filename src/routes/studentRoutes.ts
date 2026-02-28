@@ -2,23 +2,23 @@ import { Route } from "@/types";
 
 export const studentRoutes: Route[] = [
     {
-        title: "User Management",
+        title: "Student Portal",
         items: [
             {
                 name: "Dashboard",
-                url: "/dashboard/student-dashboard",
+                url: "/student-dashboard/analytics",
             },
             {
                 name: "Browse Tutors",
-                url: "/dashboard/browse-tutors",
+                url: "/student-dashboard/browse-tutors",
             },
             {
                 name: "My Bookings",
-                url: "/dashboard/my-bookings",
+                url: "/student-dashboard/my-bookings",
             },
             {
                 name: "Profile",
-                url: "/dashboard/profile",
+                url: "/student-dashboard/profile",
             }
         ]
     }

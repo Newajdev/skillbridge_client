@@ -2,19 +2,19 @@ import { Route } from "@/types";
 
 export const tutorRoutes : Route[] = [
     {
-        title: "User Management",
+        title: "Tutor Portal",
         items: [
              {
         name: "Dashboard",
-        url: "/tutor-dashboard",
+        url: "/tutor-dashboard/analytics",
     },
     {
-        name: "My Sessions",
-        url: "/tutor-dashboard/my-sessions"
+        name: "Sessions Menagement",
+        url: "/tutor-dashboard/manage-sessions"
     },
     {
-        name: "Manage Availability",
-        url: "/tutor-dashboard/manage-availability",
+        name: "Schedule management",
+        url: "/tutor-dashboard/manage-slot",
     },
     {
         name: "Earnings",
