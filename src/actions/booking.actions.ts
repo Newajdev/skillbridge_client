@@ -11,6 +11,15 @@ export async function updateBookingStatusAction(bookingId: string, status: strin
     return res;
 }
 
+export async function createBookingAction(slotId: string) {
+    const res = await bookingService.createBooking(slotId);
+    if (!res.error) {
+        revalidatePath("/my-bookings");
+        revalidatePath("/tutor-dashboard/manage-sessions");
+    }
+    return res;
+}
+
 export async function startSessionAction(bookingId: string, sessionLinks: string) {
     const res = await bookingService.startSession(bookingId, sessionLinks);
     if (!res.error) {

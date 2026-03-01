@@ -20,7 +20,7 @@ const getBookings = async () => {
         }
 
         const response = await result.json();
-        return { data: response.data || response, error: null };
+        return { data: response, error: null };
     } catch (error) {
         return { data: null, error: { message: "Network error fetching bookings", error } };
     }
@@ -39,7 +39,14 @@ const createBooking = async (slotId: string) => {
         });
 
         if (!result.ok) {
-            return { data: null, error: { message: `Booking failed: ${result.status}` } };
+            let backendMessage = `Booking failed: ${result.status}`;
+            try {
+                const errorData = await result.json();
+                backendMessage = errorData.message || backendMessage;
+            } catch (e) {
+                // Ignore parse error
+            }
+            return { data: null, error: { message: backendMessage } };
         }
 
         const data = await result.json();

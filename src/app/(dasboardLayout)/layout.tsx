@@ -65,6 +65,12 @@ export default async function DashboardLayout({
     <SidebarProvider>
       <AppSidebar user={userInfo} />
       <SidebarInset>
+        {/* Mobile Header with Sidebar Trigger */}
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 md:hidden bg-white sticky top-0 z-50">
+          <SidebarTrigger className="-ml-1" />
+          <div className="font-black text-xl tracking-tight text-[#173e72] ml-2">SkillBridge</div>
+        </header>
+
         <div className="flex flex-1 flex-col gap-4">
           {userInfo.role.toUpperCase() === Roles.admin && admin}
           {userInfo.role.toUpperCase() === Roles.tutor && tutor}

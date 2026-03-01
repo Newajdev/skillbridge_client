@@ -11,6 +11,7 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
 import { publicService } from "@/services/public.service";
+import { createBookingAction } from "@/actions/booking.actions";
 import { toast } from "sonner";
 import {
     Dialog,
@@ -64,10 +65,10 @@ export default function TutorDetails({ tutor }: TutorDetailsProps) {
         setIsSubmitting(true);
         const toastId = toast.loading("Confirming your booking...");
 
-        const { data, error } = await publicService.createBooking(selectedSlotId);
+        const { data, error } = await createBookingAction(selectedSlotId);
 
         if (error) {
-            toast.error("Failed to create booking", { id: toastId });
+            toast.error(error.message || "Failed to create booking", { id: toastId });
         } else if (data?.success) {
             toast.success("Booking confirmed successfully!", { id: toastId });
             setIsBookingOpen(false);

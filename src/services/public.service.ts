@@ -61,28 +61,6 @@ const getTutorSlots = async (tutorId: string) => {
   }
 };
 
-const createBooking = async (slotId: string) => {
-  try {
-    const result = await fetch(`${API_URL}/create-bookings`, {
-      method: "POST",
-      body: JSON.stringify({ slotId }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
-
-    if (!result.ok) {
-      return { data: null, error: { message: `Booking failed: ${result.status}` } };
-    }
-
-    const data = await result.json();
-    return { data: data, error: null };
-  } catch (error) {
-    return { data: null, error: { message: "Network error creating booking", error } };
-  }
-};
-
 const getPlatformStats = async () => {
   try {
     const result = await fetch(`${API_URL}/public/stats`, {
@@ -101,5 +79,4 @@ export const publicService = {
   getTutorById,
   getTutorSlots,
   getPlatformStats,
-  createBooking,
 };
