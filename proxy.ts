@@ -1,9 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { Roles } from "./constants/roles";
+import { Roles } from "@/constants/roles";
 import { env } from "@/env";
+import { NextRequest, NextResponse } from "next/server";
 
 const API_URL = env.API_URL;
-
 async function getSession(cookie: string) {
   try {
     const res = await fetch(`${API_URL}/auth/get-session`, {
@@ -15,13 +14,11 @@ async function getSession(cookie: string) {
     const session = await res.json();
     if (!session) return null;
     return session;
-
   } catch (error) {
     console.log("Error fetching session in proxy", error);
     return null;
   }
 }
-
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -46,6 +43,7 @@ export async function proxy(request: NextRequest) {
 
   const cookie = request.cookies.toString();
   const data = await getSession(cookie);
+  console.log(data.user.role)
 
   if (data?.user) {
     isAuthenticated = true;
@@ -58,36 +56,31 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Redirect /dashboard to the specific role-based dashboard
-  if (pathname === "/dashboard") {
-    if (isAdmin) return NextResponse.redirect(new URL("/admin-dashboard", request.url));
-    if (isTutor) return NextResponse.redirect(new URL("/tutor-dashboard", request.url));
-    if (isStudent) return NextResponse.redirect(new URL("/student-dashboard", request.url));
-  }
-
   // Role-based protection:
   // If user tries to access a dashboard not for their role, redirect them to the main /dashboard default
   // The layout at /dashboard handles showing the correct slot.
 
   if (pathname.startsWith("/admin-dashboard") && !isAdmin) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
   if (pathname.startsWith("/tutor-dashboard") && !isTutor) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
   if (pathname.startsWith("/student-dashboard") && !isStudent) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
+  // Allow access if session exists
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    "/dashboard",
-    "/dashboard/:path*",
+    "/admin-dashboard",
     "/admin-dashboard/:path*",
+    "/tutor-dashboard",
     "/tutor-dashboard/:path*",
+    "/student-dashboard",
     "/student-dashboard/:path*",
   ],
 };
