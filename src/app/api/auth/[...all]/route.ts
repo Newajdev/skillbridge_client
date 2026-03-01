@@ -6,7 +6,7 @@ const API_URL = env.API_URL;
 
 async function proxy(request: NextRequest, { params }: { params: Promise<{ all: string[] }> }) {
   const { all } = await params;
-  const path = all.join("/"); 
+  const path = all.join("/");
   const url = `${API_URL}/auth/${path}${request.nextUrl.search}`;
 
   try {
@@ -23,29 +23,30 @@ async function proxy(request: NextRequest, { params }: { params: Promise<{ all: 
       headers: headers,
       body: body,
       cache: "no-store",
-      redirect: "manual" 
+      redirect: "manual"
     });
 
     const responseHeaders = new Headers(response.headers);
-    
-    // THE FIX: Rewrite Set-Cookie to remove Domain attribute
-    const setCookie = responseHeaders.get("set-cookie");
-    
-    if (setCookie) {
-      console.log("Original Set-Cookie:", setCookie);
-      // Remove Domain attribute. Regex matches "Domain=...;" or "Domain=..." at end.
-      let newSetCookie = setCookie.replace(/Domain=[^;]+;?/gi, "");
-      
-      // Ensure Path is /
-      if (!newSetCookie.includes("Path=")) {
-        newSetCookie += "; Path=/";
-      }
 
-      console.log("New Set-Cookie:", newSetCookie);
-      
-      // We must delete the old one and set new.
+    const setCookies = responseHeaders.getSetCookie();
+
+    if (setCookies && setCookies.length > 0) {
       responseHeaders.delete("set-cookie");
-      responseHeaders.set("set-cookie", newSetCookie);
+
+      setCookies.forEach((cookie) => {
+        let newCookie = cookie.replace(/Domain=[^;]+;?\s*/gi, "");
+
+        if (!newCookie.includes("Path=")) {
+          newCookie += "; Path=/";
+        }
+
+        // Remove SameSite=Lax or Strict for cross-origin if needed, but SameSite=Lax is default
+        // Usually, SameSite=None; Secure is required if cross-site, but since this is a proxy on the SAME domain as frontend, 
+        // the browser sees it as first-party! So SameSite=Lax or Strict might perfectly work.
+        // It's just Domain that messes up the cookie because Vercel frontend is NOT the backend domain.
+
+        responseHeaders.append("set-cookie", newCookie);
+      });
     }
 
     return new NextResponse(response.body, {

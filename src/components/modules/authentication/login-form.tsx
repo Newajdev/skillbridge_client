@@ -52,7 +52,7 @@ export default function LoginForm() {
         }
 
         toast.success("user Logged in Successfully", { id: ToastId });
-        router.push(callbackUrl || "/");
+        window.location.href = callbackUrl || "/";
       } catch (error) {
         toast.error("Someting wents wrong, please try again.", { id: ToastId });
       }
@@ -97,7 +97,12 @@ export default function LoginForm() {
                 field.state.meta.isTouched && !field.state.meta.isValid;
               return (
                 <Field className="space-y-2">
-                  <FieldLabel htmlFor={field.name} className="text-sm font-bold text-[#173e72] ml-1">Email Address</FieldLabel>
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-sm font-bold text-[#173e72] ml-1"
+                  >
+                    Email Address
+                  </FieldLabel>
                   <Input
                     type="email"
                     id={field.name}
@@ -119,7 +124,12 @@ export default function LoginForm() {
                 field.state.meta.isTouched && !field.state.meta.isValid;
               return (
                 <Field className="space-y-2">
-                  <FieldLabel htmlFor={field.name} className="text-sm font-bold text-[#173e72] ml-1">Password</FieldLabel>
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-sm font-bold text-[#173e72] ml-1"
+                  >
+                    Password
+                  </FieldLabel>
                   <Input
                     type="password"
                     id={field.name}
@@ -147,7 +157,7 @@ export default function LoginForm() {
         </Button>
 
         <div className="text-sm font-medium text-muted-foreground">
-          Don't have an account?{" "}
+          {"Don't have an account?"}
           <Link
             href="/register"
             className="text-[#173e72] font-black hover:underline hover:underline-offset-4 transition-all"
