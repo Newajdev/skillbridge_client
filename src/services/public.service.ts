@@ -17,7 +17,7 @@ const getTutors = async (params?: Record<string, any>) => {
       });
     }
 
-    const url = `${API_URL}/public/tutors${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
+    const url = `${API_URL}/api/public/tutors${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
     const result = await fetch(url);
 
     const data = await result.json();
@@ -30,7 +30,7 @@ const getTutors = async (params?: Record<string, any>) => {
 
 const getTutorById = async (id: string | string[]) => {
   try {
-    const result = await fetch(`${API_URL}/public/tutors/${id}`);
+    const result = await fetch(`${API_URL}/api/public/tutors/${id}`);
 
     const data = await result.json();
 
@@ -42,7 +42,7 @@ const getTutorById = async (id: string | string[]) => {
 
 const getTutorSlots = async (tutorId: string) => {
   try {
-    const result = await fetch(`${API_URL}/slots?tutorId=${tutorId}`, {
+    const result = await fetch(`${API_URL}/api/slots?tutorId=${tutorId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -63,7 +63,7 @@ const getTutorSlots = async (tutorId: string) => {
 
 const getPlatformStats = async () => {
   try {
-    const result = await fetch(`${API_URL}/public/stats`, {
+    const result = await fetch(`${API_URL}/api/public/stats`, {
       cache: "no-store",
     });
 

@@ -96,7 +96,7 @@ const Navbar = ({
 
   const isLoggedIn = !!session;
   const user = session?.user;
-  const userRole = (user as any)?.role.toLowerCase()
+  const userRole = (user as any)?.role?.toLowerCase()
 
   
   const handleLogout = async () => {

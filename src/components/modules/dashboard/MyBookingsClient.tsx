@@ -15,12 +15,16 @@ import {
     Filter,
     Clock,
     CreditCard,
-    Sparkles
+    Sparkles,
+    Star
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import Image from "next/image";
 import Link from 'next/link';
 import { toast } from "sonner";
+import { createReviewAction } from "@/actions/review.actions";
 
 interface MyBookingsClientProps {
     initialBookings: any[];
@@ -28,7 +32,35 @@ interface MyBookingsClientProps {
 
 export default function MyBookingsClient({ initialBookings }: MyBookingsClientProps) {
     const [bookings, setBookings] = useState(initialBookings);
+
+    // Review Modal State
+    const [reviewModalBookingId, setReviewModalBookingId] = useState<string | null>(null);
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState("");
+    const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
     const cn = (...inputs: any[]) => inputs.filter(Boolean).join(" ");
+
+    const handleReviewSubmit = async () => {
+        if (!reviewModalBookingId) return;
+        if (rating === 0) {
+            toast.error("Please select a rating (1-5 stars)");
+            return;
+        }
+
+        setIsSubmittingReview(true);
+        const { error } = await createReviewAction(reviewModalBookingId, rating, comment);
+        setIsSubmittingReview(false);
+
+        if (error) {
+            toast.error(error.message || "Failed to submit review");
+        } else {
+            toast.success("Review submitted successfully!");
+            setReviewModalBookingId(null);
+            setRating(0);
+            setComment("");
+        }
+    };
 
     return (
         <div className="min-h-screen bg-[#f8fafc]/50">
@@ -152,8 +184,19 @@ export default function MyBookingsClient({ initialBookings }: MyBookingsClientPr
                                                                 </a>
                                                             </Button>
                                                         )}
-
-
+                                                        {booking.status === "COMPLETED" && (
+                                                            <Button
+                                                                size="sm"
+                                                                onClick={() => {
+                                                                    setReviewModalBookingId(booking.id);
+                                                                    setRating(0);
+                                                                    setComment("");
+                                                                }}
+                                                                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black px-6 shadow-xl shadow-emerald-200 transition-all active:scale-95"
+                                                            >
+                                                                <Star className="h-4 w-4 mr-2" /> Review
+                                                            </Button>
+                                                        )}
                                                         <Button size="icon" variant="ghost" className="h-10 w-10 rounded-full hover:bg-white hover:shadow-md transition-all">
                                                             <MoreHorizontal className="h-5 w-5 text-slate-400" />
                                                         </Button>
@@ -181,6 +224,58 @@ export default function MyBookingsClient({ initialBookings }: MyBookingsClientPr
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Review Modal */}
+            <Dialog open={!!reviewModalBookingId} onOpenChange={(open) => !open && setReviewModalBookingId(null)}>
+                <DialogContent className="sm:max-w-[425px] rounded-3xl border-none shadow-2xl">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-black text-[#173e72]">Write a Review</DialogTitle>
+                        <DialogDescription className="font-medium text-slate-500">
+                            Share your learning experience with this tutor to help others.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-6 py-6">
+                        <div className="flex flex-col items-center gap-3">
+                            <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Rate your session</span>
+                            <div className="flex gap-2">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <Star
+                                        key={star}
+                                        className={`h-10 w-10 cursor-pointer transition-all hover:scale-110 active:scale-95 ${rating >= star ? 'fill-amber-400 text-amber-400 drop-shadow-md' : 'text-slate-200 hover:text-amber-200'}`}
+                                        onClick={() => setRating(star)}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                        <div className="grid gap-3">
+                            <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Your Feedback (Optional)</span>
+                            <Textarea
+                                placeholder="How was the teaching style? Did it help you?"
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                                rows={4}
+                                className="resize-none rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white transition-all shadow-sm font-medium"
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter className="gap-3 sm:gap-0">
+                        <Button
+                            variant="outline"
+                            onClick={() => setReviewModalBookingId(null)}
+                            className="rounded-xl font-bold border-slate-200 text-slate-600 hover:bg-slate-50"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleReviewSubmit}
+                            disabled={isSubmittingReview}
+                            className="bg-[#173e72] hover:bg-blue-900 text-white rounded-xl font-black shadow-xl shrink-0"
+                        >
+                            {isSubmittingReview ? "Submitting..." : "Submit Review"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
         </div>
     );

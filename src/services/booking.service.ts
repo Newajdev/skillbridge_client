@@ -6,13 +6,13 @@ const API_URL = env.NEXT_PUBLIC_API_URL;
 const getBookings = async () => {
     try {
         const cookieStore = await cookies();
-        const result = await fetch(`${API_URL}/bookings`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookieStore.toString(),
-            },
-            cache: "no-store",
+        const result = await fetch(`${API_URL}/api/bookings`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: cookieStore.toString(),
+          },
+          cache: "no-store",
         });
 
         if (!result.ok) {
@@ -29,13 +29,13 @@ const getBookings = async () => {
 const createBooking = async (slotId: string) => {
     try {
         const cookieStore = await cookies();
-        const result = await fetch(`${API_URL}/create-bookings`, {
-            method: "POST",
-            body: JSON.stringify({ slotId }),
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookieStore.toString(),
-            },
+        const result = await fetch(`${API_URL}/api/create-bookings`, {
+          method: "POST",
+          body: JSON.stringify({ slotId }),
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: cookieStore.toString(),
+          },
         });
 
         if (!result.ok) {
@@ -59,14 +59,17 @@ const createBooking = async (slotId: string) => {
 const updateBookingStatus = async (bookingId: string, status: string, sessionLinks?: string) => {
     try {
         const cookieStore = await cookies();
-        const result = await fetch(`${API_URL}/change-booking-status/${bookingId}`, {
+        const result = await fetch(
+          `${API_URL}/api/change-booking-status/${bookingId}`,
+          {
             method: "PUT",
             body: JSON.stringify({ status, sessionLinks }),
             headers: {
-                "Content-Type": "application/json",
-                Cookie: cookieStore.toString(),
+              "Content-Type": "application/json",
+              Cookie: cookieStore.toString(),
             },
-        });
+          },
+        );
 
         if (!result.ok) {
             return { data: null, error: { message: `Update failed: ${result.status}` } };
@@ -82,14 +85,17 @@ const updateBookingStatus = async (bookingId: string, status: string, sessionLin
 const startSession = async (bookingId: string, sessionLinks: string) => {
     try {
         const cookieStore = await cookies();
-        const result = await fetch(`${API_URL}/start-session/${bookingId}`, {
+        const result = await fetch(
+          `${API_URL}/api/start-session/${bookingId}`,
+          {
             method: "PUT",
             body: JSON.stringify({ sessionLinks }),
             headers: {
-                "Content-Type": "application/json",
-                Cookie: cookieStore.toString(),
+              "Content-Type": "application/json",
+              Cookie: cookieStore.toString(),
             },
-        });
+          },
+        );
 
         if (!result.ok) {
             return { data: null, error: { message: `Update failed: ${result.status}` } };

@@ -13,7 +13,7 @@ export default async function HomePage() {
   ]);
 
   const tutors = tutorsRes.data?.data?.data || [];
-  const categories = categoriesRes.data?.data || [];
+  const categories = categoriesRes.data;
 
   return (
     <div className="flex flex-col min-h-screen">

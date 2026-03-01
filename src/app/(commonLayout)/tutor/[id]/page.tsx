@@ -6,11 +6,12 @@ export default async function TutorPage({ params }: { params: { id: string } }) 
     const { id } = await params;
     const res = await publicService.getTutorById(id);
 
+
     if (!res.data?.data) {
         return notFound();
     }
 
-    const tutor = res.data.data;
+    const tutor = res.data?.data;
 
     return <TutorDetails tutor={tutor} />;
 }

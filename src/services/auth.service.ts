@@ -1,9 +1,12 @@
 export const authService = {
     verifyEmail: async function (token: string) {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify-email?token=${token}`, {
+            const res = await fetch(
+              `${process.env.NEXT_PUBLIC_API_URL}/api/auth/verify-email?token=${token}`,
+              {
                 method: "GET",
-            });
+              },
+            );
 
             const data = await res.json();
 

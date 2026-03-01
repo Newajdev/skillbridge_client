@@ -7,11 +7,11 @@ export const slotService = {
     getMySlots: async function () {
         try {
             const cookieStore = await cookies();
-            const res = await fetch(`${API_URL}/slots/my`, {
-                headers: {
-                    Cookie: cookieStore.toString(),
-                },
-                cache: "no-store",
+            const res = await fetch(`${API_URL}/api/slots/my`, {
+              headers: {
+                Cookie: cookieStore.toString(),
+              },
+              cache: "no-store",
             });
 
             const response = await res.json();
@@ -29,13 +29,13 @@ export const slotService = {
     createSlot: async function (data: any) {
         try {
             const cookieStore = await cookies();
-            const res = await fetch(`${API_URL}/create-slot`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Cookie: cookieStore.toString(),
-                },
-                body: JSON.stringify(data),
+            const res = await fetch(`${API_URL}/api/create-slot`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Cookie: cookieStore.toString(),
+              },
+              body: JSON.stringify(data),
             });
 
             const response = await res.json();
@@ -53,13 +53,13 @@ export const slotService = {
     updateSlot: async function (id: string, data: any) {
         try {
             const cookieStore = await cookies();
-            const res = await fetch(`${API_URL}/update-slot/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Cookie: cookieStore.toString(),
-                },
-                body: JSON.stringify(data),
+            const res = await fetch(`${API_URL}/api/update-slot/${id}`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Cookie: cookieStore.toString(),
+              },
+              body: JSON.stringify(data),
             });
 
             const response = await res.json();
@@ -78,11 +78,11 @@ export const slotService = {
         try {
             const cookieStore = await cookies();
             // Using /update-slot/ because of the backend route mismatch
-            const res = await fetch(`${API_URL}/update-slot/${id}`, {
-                method: "DELETE",
-                headers: {
-                    Cookie: cookieStore.toString(),
-                },
+            const res = await fetch(`${API_URL}/api/update-slot/${id}`, {
+              method: "DELETE",
+              headers: {
+                Cookie: cookieStore.toString(),
+              },
             });
 
             const response = await res.json();

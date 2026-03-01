@@ -10,23 +10,29 @@ import { publicService } from "@/services/public.service";
 import { cn } from "@/lib/utils";
 
 interface TutorsModuleProps {
-  initialTutors: tutor[];
-  categories: any[];
+  initialTutors?: tutor[];
+  categories?: any[];
   initialMeta?: {
     total: number;
     totalPage: number;
   };
 }
 
-export default function TutorsModule({ initialTutors, categories, initialMeta }: TutorsModuleProps) {
+export default function TutorsModuleTutorsModule({
+  initialTutors = [],
+  categories = [],
+  initialMeta,
+}: TutorsModuleProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [tutors, setTutors] = useState<tutor[]>(initialTutors);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [meta, setMeta] = useState(initialMeta || {
+const [meta, setMeta] = useState(
+  initialMeta ?? {
     total: initialTutors.length,
-    totalPage: 1
-  });
+    totalPage: 1,
+  },
+);
 
   const [filters, setFilters] = useState<{
     categoryId: string | null;
@@ -47,7 +53,7 @@ export default function TutorsModule({ initialTutors, categories, initialMeta }:
       maxPrice: filters.priceRange[1],
       rating: filters.rating,
       page,
-      limit: 9
+      limit: 9,
     };
 
     const res = await publicService.getTutors(params);
@@ -99,7 +105,8 @@ export default function TutorsModule({ initialTutors, categories, initialMeta }:
                   </span>
                 </h1>
                 <p className="text-xl text-muted-foreground font-medium leading-relaxed max-w-xl">
-                  Unlock your full potential with personalized mentorship from industry experts and certified academic professionals.
+                  Unlock your full potential with personalized mentorship from
+                  industry experts and certified academic professionals.
                 </p>
               </div>
 
@@ -130,14 +137,22 @@ export default function TutorsModule({ initialTutors, categories, initialMeta }:
                 <Zap className="absolute -top-10 -right-10 h-40 w-40 text-white/5 rotate-12 transition-transform group-hover:scale-110 duration-700" />
                 <div className="relative z-10 space-y-8">
                   <div>
-                    <h4 className="text-6xl font-black tracking-tighter">{meta.total}</h4>
-                    <p className="text-white/60 font-bold uppercase tracking-widest text-xs mt-1">Found Professionals</p>
+                    <h4 className="text-6xl font-black tracking-tighter">
+                      {meta.total}
+                    </h4>
+                    <p className="text-white/60 font-bold uppercase tracking-widest text-xs mt-1">
+                      Found Professionals
+                    </p>
                   </div>
                   <div className="h-px bg-white/10" />
                   <div className="space-y-4">
                     <div className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/10">
-                      <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center font-black text-primary">99%</div>
-                      <span className="font-bold text-sm tracking-tight">Satisfaction</span>
+                      <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center font-black text-primary">
+                        99%
+                      </div>
+                      <span className="font-bold text-sm tracking-tight">
+                        Satisfaction
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -166,7 +181,10 @@ export default function TutorsModule({ initialTutors, categories, initialMeta }:
                   {searchQuery ? "Search Results" : "Top Tier Instructors"}
                 </h2>
                 <p className="text-muted-foreground font-medium text-lg">
-                  Available mentors identified: <span className="text-[#173e72] font-black">{meta.total}</span>
+                  Available mentors identified:{" "}
+                  <span className="text-[#173e72] font-black">
+                    {meta.total}
+                  </span>
                 </p>
               </div>
 
@@ -177,13 +195,12 @@ export default function TutorsModule({ initialTutors, categories, initialMeta }:
                     <ArrowRight className="h-3 w-3" />
                   </div>
                 )}
-                {(filters.priceRange[0] > 0 ||
-                  filters.priceRange[1] < 200) && (
-                    <div className="bg-blue-500/5 text-blue-600 border border-blue-500/10 px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2">
-                      Refined Pricing
-                      <ArrowRight className="h-3 w-3" />
-                    </div>
-                  )}
+                {(filters.priceRange[0] > 0 || filters.priceRange[1] < 200) && (
+                  <div className="bg-blue-500/5 text-blue-600 border border-blue-500/10 px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2">
+                    Refined Pricing
+                    <ArrowRight className="h-3 w-3" />
+                  </div>
+                )}
                 {loading && (
                   <div className="flex items-center gap-2 text-primary font-bold animate-pulse">
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -193,7 +210,12 @@ export default function TutorsModule({ initialTutors, categories, initialMeta }:
               </div>
             </div>
 
-            <div className={cn("transition-all duration-300", loading ? "opacity-50 pointer-events-none" : "opacity-100")}>
+            <div
+              className={cn(
+                "transition-all duration-300",
+                loading ? "opacity-50 pointer-events-none" : "opacity-100",
+              )}
+            >
               <TutorList tutors={tutors} />
             </div>
 
@@ -202,7 +224,7 @@ export default function TutorsModule({ initialTutors, categories, initialMeta }:
               <div className="flex items-center justify-center gap-4 pt-12 border-t border-muted/30">
                 <Button
                   variant="outline"
-                  onClick={() => setPage(prev => Math.max(1, prev - 1))}
+                  onClick={() => setPage((prev) => Math.max(1, prev - 1))}
                   disabled={page === 1 || loading}
                   className="rounded-xl h-12 px-6 font-bold"
                 >
@@ -215,7 +237,10 @@ export default function TutorsModule({ initialTutors, categories, initialMeta }:
                       variant={page === i + 1 ? "default" : "outline"}
                       onClick={() => setPage(i + 1)}
                       disabled={loading}
-                      className={cn("w-12 h-12 rounded-xl font-bold", page === i + 1 && "bg-[#173e72]")}
+                      className={cn(
+                        "w-12 h-12 rounded-xl font-bold",
+                        page === i + 1 && "bg-[#173e72]",
+                      )}
                     >
                       {i + 1}
                     </Button>
@@ -223,7 +248,9 @@ export default function TutorsModule({ initialTutors, categories, initialMeta }:
                 </div>
                 <Button
                   variant="outline"
-                  onClick={() => setPage(prev => Math.min(meta.totalPage, prev + 1))}
+                  onClick={() =>
+                    setPage((prev) => Math.min(meta.totalPage, prev + 1))
+                  }
                   disabled={page === meta.totalPage || loading}
                   className="rounded-xl h-12 px-6 font-bold"
                 >

@@ -32,7 +32,7 @@ export const userService = {
     try {
       const cookieStore = await cookies();
 
-      const res = await fetch(`${env.API_URL}/profile/me`, {
+      const res = await fetch(`${env.API_URL}/api/profile/me`, {
         headers: {
           Cookie: cookieStore.toString(),
         },
@@ -54,7 +54,7 @@ export const userService = {
     try {
       const cookieStore = await cookies();
 
-      const res = await fetch(`${env.API_URL}/profile/update/me`, {
+      const res = await fetch(`${env.API_URL}/api/profile/update/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

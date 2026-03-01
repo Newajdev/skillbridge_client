@@ -8,7 +8,7 @@ export const adminService = {
     getAllUsers: async function () {
         try {
             const cookieStore = await cookies();
-            const res = await fetch(`${API_URL}/admin/users`, {
+            const res = await fetch(`${API_URL}/api/admin/users`, {
                 headers: {
                     Cookie: cookieStore.toString(),
                 },
@@ -30,13 +30,13 @@ export const adminService = {
     updateUserStatus: async function (id: string, status: string) {
         try {
             const cookieStore = await cookies();
-            const res = await fetch(`${API_URL}/admin/users/status/${id}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Cookie: cookieStore.toString(),
-                },
-                body: JSON.stringify({ status }),
+            const res = await fetch(`${API_URL}/api/admin/users/status/${id}`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Cookie: cookieStore.toString(),
+              },
+              body: JSON.stringify({ status }),
             });
 
             const response = await res.json();
@@ -55,13 +55,13 @@ export const adminService = {
     createCategory: async function (name: string) {
         try {
             const cookieStore = await cookies();
-            const res = await fetch(`${API_URL}/category`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Cookie: cookieStore.toString(),
-                },
-                body: JSON.stringify({ name }),
+            const res = await fetch(`${API_URL}/api/category`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Cookie: cookieStore.toString(),
+              },
+              body: JSON.stringify({ name }),
             });
 
             const response = await res.json();
@@ -79,13 +79,13 @@ export const adminService = {
     updateCategory: async function (id: string, name: string) {
         try {
             const cookieStore = await cookies();
-            const res = await fetch(`${API_URL}/category/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Cookie: cookieStore.toString(),
-                },
-                body: JSON.stringify({ name }),
+            const res = await fetch(`${API_URL}/api/category/${id}`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Cookie: cookieStore.toString(),
+              },
+              body: JSON.stringify({ name }),
             });
 
             const response = await res.json();
@@ -103,11 +103,11 @@ export const adminService = {
     deleteCategory: async function (id: string) {
         try {
             const cookieStore = await cookies();
-            const res = await fetch(`${API_URL}/category/${id}`, {
-                method: "DELETE",
-                headers: {
-                    Cookie: cookieStore.toString(),
-                },
+            const res = await fetch(`${API_URL}/api/category/${id}`, {
+              method: "DELETE",
+              headers: {
+                Cookie: cookieStore.toString(),
+              },
             });
 
             if (!res.ok) {
@@ -126,11 +126,11 @@ export const adminService = {
     getAllReviews: async function () {
         try {
             const cookieStore = await cookies();
-            const res = await fetch(`${API_URL}/admin/reviews`, {
-                headers: {
-                    Cookie: cookieStore.toString(),
-                },
-                cache: "no-store",
+            const res = await fetch(`${API_URL}/api/admin/reviews`, {
+              headers: {
+                Cookie: cookieStore.toString(),
+              },
+              cache: "no-store",
             });
 
             if (!res.ok) {

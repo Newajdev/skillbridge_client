@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 const API_URL = env.API_URL;
 async function getSession(cookie: string) {
   try {
-    const res = await fetch(`${API_URL}/auth/get-session`, {
+    const res = await fetch(`${API_URL}/api/auth/get-session`, {
       headers: {
         cookie: cookie,
       },
@@ -29,7 +29,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Check for session token in cookies
-  const sessionToken = request.cookies.get("better-auth.session_token");
+  const sessionToken = request.cookies.get("better-auth.session_token") || request.cookies.get("__Secure-better-auth.session_token");
 
   //* User is not authenticated at all
   if (!sessionToken) {
@@ -43,7 +43,7 @@ export async function proxy(request: NextRequest) {
 
   const cookie = request.cookies.toString();
   const data = await getSession(cookie);
-  console.log(data.user.role)
+  console.log(data?.user?.role)
 
   if (data?.user) {
     isAuthenticated = true;
